@@ -1,0 +1,117 @@
+.settings-page {
+  padding: 0;
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.settings-card {
+  border-radius: 12px;
+}
+
+.settings-card .ant-card-head-title {
+  font-weight: 600;
+}
+
+/* 切换按钮组 */
+.toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  background: #F9FAFB;
+  transition: all 0.2s;
+  cursor: pointer;
+  position: relative;
+}
+
+.toggle-item:hover {
+  border-color: #D1D5DB;
+  background: #F3F4F6;
+}
+
+/* 图标容器 */
+.toggle-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.recognition-icon {
+  background: linear-gradient(135deg, #EEF2FF, #C7D2FE);
+  color: #4F46E5;
+}
+
+.archive-icon {
+  background: linear-gradient(135deg, #ECFDF5, #A7F3D0);
+  color: #059669;
+}
+
+.notification-icon {
+  background: linear-gradient(135deg, #FFF7ED, #FED7AA);
+  color: #EA580C;
+}
+
+/* 文字区域 */
+.toggle-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.toggle-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1F2937;
+  line-height: 1.4;
+}
+
+.toggle-desc {
+  font-size: 12px;
+  color: #9CA3AF;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+/* Switch 放在右侧 */
+.toggle-switch {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* 移除 Form.Item 的 margin-bottom，Switch 占位用 */
+.settings-card .ant-form-item {
+  margin-bottom: 0;
+}
+
+/* 按钮区域增加上方间距 */
+.settings-card .ant-form-item:last-child {
+  margin-top: 20px;
+}
+
+/* about */
+.about-info p {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #4B5563;
+}
+
+.about-description {
+  color: #6B7280;
+  line-height: 1.8;
+}

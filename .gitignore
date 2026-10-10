@@ -1,0 +1,28 @@
+# 敏感配置，禁止提交
+.env
+
+# 用户数据 / 备份 / 大模型文件（不纳入仓库）
+travel-files/
+备份/
+models/
+travel-reimbursement-ai.zip
+
+# 冗余目录（Dockerfile/nginx.conf 与 travel-reimbursement-ai 内重复）
+frontend/
+
+# 依赖与构建产物
+node_modules/
+dist/
+target/
+logs/
+*.log
+
+# IDE
+.idea/
+.cursor/
+.vscode/
+*.iml
+
+# 系统文件
+.DS_Store
+Thumbs.db

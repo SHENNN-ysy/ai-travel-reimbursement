@@ -1,0 +1,32 @@
+.file-detail-modal .modal-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.file-detail-content {
+  padding: 8px 0;
+}
+
+.detail-section {
+  margin-bottom: 20px;
+}
+
+.detail-section:last-child {
+  margin-bottom: 0;
+}
+
+.detail-section .section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.remark-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}

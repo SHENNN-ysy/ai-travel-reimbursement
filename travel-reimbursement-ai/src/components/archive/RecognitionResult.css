@@ -1,0 +1,73 @@
+.recognition-result-card {
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.recognition-result-card .ant-card-head {
+  min-height: auto;
+  padding: 16px 24px;
+  background: #F9FAFB;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.recognition-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recognition-icon {
+  font-size: 20px;
+}
+
+.recognition-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.recognition-file-info {
+  font-size: 13px;
+  color: #6B7280;
+}
+
+.recognition-data {
+  padding: 16px 0;
+}
+
+.data-row {
+  display: flex;
+  padding: 8px 0;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.data-row:last-child {
+  border-bottom: none;
+}
+
+.data-label {
+  width: 100px;
+  color: #6B7280;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.data-value {
+  flex: 1;
+  color: #1F2937;
+  font-size: 14px;
+}
+
+.data-value.amount {
+  color: #10B981;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.recognition-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #E5E7EB;
+}

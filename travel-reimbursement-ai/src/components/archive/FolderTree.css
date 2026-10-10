@@ -1,0 +1,79 @@
+.folder-tree-container {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #E5E7EB;
+  overflow: hidden;
+}
+
+.folder-tree-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: #F9FAFB;
+  border-bottom: 1px solid #E5E7EB;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.folder-tree-title {
+  font-size: 14px;
+}
+
+.folder-tree-list {
+  padding: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.folder-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.folder-item:hover {
+  background: #F3F4F6;
+}
+
+.folder-item.selected {
+  background: #EFF6FF;
+  border: 1px solid #3B82F6;
+}
+
+.folder-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.folder-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.folder-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1F2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 4px;
+}
+
+.folder-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #9CA3AF;
+}
+
+.empty-folders {
+  padding: 32px;
+  text-align: center;
+  color: #9CA3AF;
+  font-size: 14px;
+}

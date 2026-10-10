@@ -1,0 +1,85 @@
+.attachment-uploader-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.attachment-dragger {
+  border: 2px dashed #E5E7EB;
+  border-radius: 12px;
+  padding: 48px 24px;
+  background: white;
+}
+
+.attachment-dragger:hover {
+  border-color: #3B82F6;
+  background: #EFF6FF;
+}
+
+.attachment-dragger .ant-upload-drag-icon {
+  margin-bottom: 16px;
+}
+
+.attachment-dragger .ant-upload-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1F2937;
+  margin-bottom: 8px;
+}
+
+.attachment-dragger .ant-upload-hint {
+  font-size: 12px;
+  color: #9CA3AF;
+}
+
+.attachment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.attachment-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.attachment-item:hover {
+  background: #F9FAFB;
+  border-color: #3B82F6;
+}
+
+.attachment-icon {
+  flex-shrink: 0;
+}
+
+.attachment-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.attachment-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1F2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attachment-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.attachment-size {
+  font-size: 12px;
+  color: #9CA3AF;
+}

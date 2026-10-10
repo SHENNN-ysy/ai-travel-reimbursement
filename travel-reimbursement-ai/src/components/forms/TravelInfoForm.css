@@ -1,0 +1,67 @@
+.travel-info-form {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.form-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.travel-info-form .ant-form-item-label > label {
+  font-weight: 500;
+  color: #374151;
+}
+
+.travel-info-form .ant-input,
+.travel-info-form .ant-select-selector,
+.travel-info-form .ant-picker {
+  border-radius: 8px;
+}
+
+.person-input-container {
+  min-height: 40px;
+  padding: 4px;
+  border: 1px dashed #D1D5DB;
+  border-radius: 8px;
+  background: #F9FAFB;
+}
+
+.person-input-container:hover {
+  border-color: #3B82F6;
+}
+
+.person-tag {
+  margin: 2px 4px;
+  font-size: 14px;
+  padding: 2px 8px;
+  background: #EFF6FF;
+  border-color: #3B82F6;
+  color: #1D4ED8;
+}
+
+.person-tag .ant-tag-close-icon {
+  color: #3B82F6;
+  margin-left: 4px;
+}
+
+.person-tag .ant-tag-close-icon:hover {
+  color: #EF4444;
+}
+
+.person-input-container .ant-input-affix-wrapper {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.person-input-container .ant-input-affix-wrapper:hover,
+.person-input-container .ant-input-affix-wrapper:focus {
+  border: none;
+  box-shadow: none;
+}

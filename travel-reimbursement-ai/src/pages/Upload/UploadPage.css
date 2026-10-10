@@ -1,0 +1,19 @@
+.upload-page {
+  padding: 0;
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.upload-tabs .ant-tabs-nav {
+  margin-bottom: 24px;
+}
+
+.upload-tabs .ant-tabs-tab {
+  padding: 12px 0;
+  font-size: 14px;
+}
+
+.upload-tabs .ant-tabs-tab-active {
+  font-weight: 600;
+}

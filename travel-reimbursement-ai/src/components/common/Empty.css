@@ -1,0 +1,9 @@
+.custom-empty {
+  padding: 48px 0;
+  text-align: center;
+}
+
+.custom-empty .ant-empty-description {
+  color: #9CA3AF;
+  font-size: 14px;
+}

@@ -1,0 +1,159 @@
+/* 使用说明弹窗 */
+.help-trigger-btn {
+  color: #6B7280;
+  font-size: 13px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.help-trigger-btn:hover {
+  color: #3B82F6;
+  background: #EFF6FF;
+}
+
+.help-modal .ant-modal-content {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.help-modal .ant-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.help-modal .ant-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.help-modal .ant-modal-body {
+  padding: 0;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.help-modal .ant-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #E5E7EB;
+}
+
+.help-modal .ant-modal-close {
+  top: 20px;
+  right: 20px;
+}
+
+/* 引导内容样式 */
+.help-guide-content {
+  padding: 24px;
+}
+
+.help-intro {
+  font-size: 14px;
+  color: #374151;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  line-height: 1.8;
+}
+
+.help-section {
+  margin-bottom: 24px;
+}
+
+.help-section:last-child {
+  margin-bottom: 0;
+}
+
+.help-section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.help-section-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 16px;
+  background: #3B82F6;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.help-section-subtitle {
+  font-size: 13px;
+  color: #6B7280;
+  margin-bottom: 12px;
+  padding-left: 12px;
+}
+
+.help-step-list {
+  margin: 0;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.help-step-list li {
+  font-size: 13px;
+  color: #374151;
+  line-height: 1.8;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  transition: background 0.15s;
+}
+
+.help-step-list li:hover {
+  background: #F9FAFB;
+}
+
+.help-step-list li strong {
+  color: #1F2937;
+  font-weight: 500;
+}
+
+/* AI 模式区域 */
+.help-section-ai {
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.help-section-ai .help-section-title::before {
+  background: #F59E0B;
+}
+
+.help-section-desc {
+  font-size: 13px;
+  color: #92400E;
+  margin-bottom: 12px;
+  line-height: 1.7;
+}
+
+.help-ai-highlight {
+  font-size: 13px;
+  color: #78350F;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.help-ai-highlight strong {
+  font-weight: 600;
+}
+
+.help-ai-highlight em {
+  font-style: normal;
+  color: #D97706;
+  font-weight: 600;
+}

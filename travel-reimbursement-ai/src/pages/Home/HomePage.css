@@ -1,0 +1,221 @@
+.home-page {
+  padding: 0;
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.welcome-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.welcome-left {
+  flex: 1;
+}
+
+.welcome-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 8px;
+}
+
+.welcome-subtitle {
+  font-size: 14px;
+  color: #6B7280;
+  margin: 0;
+}
+
+.stats-row {
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+
+.stat-card .ant-card-body {
+  padding: 20px;
+}
+
+.stat-card .ant-statistic-title {
+  font-size: 13px;
+  color: #6B7280;
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 16px;
+}
+
+/* 报销项目区域 */
+.projects-section {
+  margin-bottom: 32px;
+}
+
+.projects-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.projects-header .section-title {
+  margin-bottom: 0;
+}
+
+.projects-card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.projects-card .ant-card-body {
+  padding: 0;
+}
+
+.projects-table .ant-table-thead > tr > th {
+  background: #F9FAFB;
+  font-weight: 600;
+  color: #374151;
+  font-size: 13px;
+  padding: 12px 16px;
+}
+
+.projects-table .ant-table-tbody > tr > td {
+  padding: 10px 16px;
+  font-size: 13px;
+}
+
+.projects-table .ant-table-tbody > tr:hover > td {
+  background: #F9FAFB;
+}
+
+.project-name-text {
+  font-size: 13px;
+  color: #1F2937;
+}
+
+.inline-edit-btn {
+  opacity: 0;
+  transition: opacity 0.2s;
+  padding: 0 4px;
+}
+
+.projects-table .ant-table-tbody > tr:hover .inline-edit-btn {
+  opacity: 1;
+}
+
+/* 状态标签 */
+.status-tag {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.status-tag.status-pending {
+  background: #FEF3C7;
+  color: #D97706;
+  border-color: #FCD34D;
+}
+
+.status-tag.status-processed {
+  background: #D1FAE5;
+  color: #059669;
+  border-color: #6EE7B7;
+}
+
+.status-tag:hover {
+  opacity: 0.8;
+}
+
+.quick-actions-section {
+  margin-bottom: 32px;
+}
+
+.action-card {
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: 100%;
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.action-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.action-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 4px;
+}
+
+.action-description {
+  font-size: 13px;
+  color: #6B7280;
+  margin: 0;
+}
+
+.recent-section {
+  margin-bottom: 32px;
+}
+
+.recent-card {
+  border-radius: 12px;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #F9FAFB;
+  border-radius: 8px;
+}
+
+.activity-icon {
+  font-size: 20px;
+}
+
+.activity-content {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.activity-text {
+  font-size: 14px;
+  color: #1F2937;
+}
+
+.activity-time {
+  font-size: 12px;
+  color: #9CA3AF;
+}

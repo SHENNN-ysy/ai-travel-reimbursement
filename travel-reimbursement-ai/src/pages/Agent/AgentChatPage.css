@@ -1,0 +1,756 @@
+/* ===================== 整体布局 ===================== */
+.agent-chat-page {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ===================== 左侧边栏 ===================== */
+.agent-sidebar {
+  width: 320px;
+  min-width: 320px;
+  background: #fff;
+  border-right: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  flex-shrink: 0;
+}
+
+.sidebar-header .ant-btn-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.sidebar-header .ant-btn-text:hover {
+  background: #f5f5f5;
+}
+
+/* 会话列表区域：占据中间可伸缩空间，独立滚动 */
+.sidebar-sessions {
+  flex: 1;
+  min-height: 80px;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+/* 项目选择器：固定在底部上方 */
+.sidebar-project-selector {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.project-select {
+  width: 100%;
+}
+
+.sidebar-title {
+  font-size: 14px;
+  color: #333;
+}
+
+/* 侧边栏底部：项目信息 + 快捷指令 + 返回按钮，固定不滚动 */
+.sidebar-bottom {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: 45%;
+  overflow-y: auto;
+}
+
+/* 项目信息卡片 */
+.sidebar-project-card {
+  margin: 8px;
+  padding: 12px;
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.project-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.project-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.project-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.project-info-label {
+  color: #999;
+  flex-shrink: 0;
+}
+
+.project-info-value {
+  color: #333;
+  word-break: break-all;
+}
+
+/* 快捷指令 */
+.sidebar-quick-actions {
+  padding: 8px;
+  border-top: 1px solid #f0f0f0;
+  flex-shrink: 0;
+}
+
+.quick-actions-title {
+  font-size: 12px;
+  color: #999;
+  padding: 4px 8px 8px;
+}
+
+.quick-action-btn {
+  text-align: left;
+  font-size: 13px;
+  color: #333;
+  justify-content: flex-start;
+  padding-left: 8px !important;
+  height: 32px;
+  border-radius: 6px;
+  margin-bottom: 2px;
+}
+
+.quick-action-btn:hover {
+  background: #e6f4ff;
+  color: #3b82f6;
+}
+
+/* 侧边栏底部 */
+.sidebar-footer {
+  padding: 8px;
+  border-top: 1px solid #f0f0f0;
+  flex-shrink: 0;
+}
+
+.back-btn {
+  width: 100%;
+  justify-content: flex-start;
+  color: #666;
+  font-size: 13px;
+}
+
+/* 会话列表项 */
+.session-item {
+  padding: 8px 12px !important;
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 2px 8px;
+  transition: background 0.2s;
+}
+
+.session-item:hover {
+  background: #f5f5f5;
+}
+
+.session-item-active {
+  background: #e6f4ff !important;
+}
+
+.session-title {
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.session-time {
+  font-size: 12px;
+  color: #999;
+}
+
+.session-badge {
+  flex-shrink: 0;
+}
+
+.session-delete-btn {
+  color: #999;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.session-item:hover .session-delete-btn {
+  opacity: 1;
+}
+
+/* ===================== 主对话区 ===================== */
+.agent-chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #f7f8fa;
+  overflow: hidden;
+  min-width: 0;
+  max-width: 75%;
+}
+
+/* Header */
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+.chat-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chat-header-icon {
+  font-size: 18px;
+  color: #3b82f6;
+}
+
+.chat-header-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.chat-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 消息区域：固定容器，内容交给内部的 .chat-list-container 滚动 */
+.chat-messages {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 对话列表容器：唯一可滚动区域 */
+.chat-list-container {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 对话列表：padding 在这里使滚动边界正确 */
+.chat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  flex: 1;
+}
+
+/* 空状态 */
+.chat-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+}
+
+.chat-empty-tips {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.tips-title {
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.tip-btn {
+  font-size: 13px;
+  color: #3b82f6;
+}
+
+/* ===================== 聊天项 ===================== */
+.chat-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.chat-item-user {
+  flex-direction: row-reverse;
+}
+
+.chat-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.chat-avatar-user {
+  background: #3b82f6;
+  color: #fff;
+}
+
+.chat-avatar-assistant {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+}
+
+.chat-bubble {
+  max-width: 80%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 15px;
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+.chat-bubble p {
+  margin: 0;
+}
+
+.chat-bubble-user {
+  background: #3b82f6;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-bubble-assistant {
+  background: #fff;
+  color: #333;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.message-text {
+  display: block;
+  margin: 0;
+  font-family: inherit;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.chat-bubble-thinking {
+  background: #fff;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #999;
+  min-width: 100px;
+}
+
+.thinking-text {
+  font-size: 13px;
+  color: #999;
+}
+
+/* 推理气泡（模型思考过程） */
+.chat-bubble-reasoning {
+  background: #fff;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: #333;
+  min-width: 200px;
+  max-width: 80%;
+  padding: 6px 10px;
+}
+
+.reasoning-label {
+  font-size: 11px;
+  color: #8b5cf6;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.reasoning-text {
+  margin: 0;
+  font-family: inherit;
+  font-size: 13px;
+  color: #666;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+/* 工具调用 */
+.chat-content-wrapper {
+  max-width: 80%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chat-tool-call {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 6px 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.tool-call-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.tool-call-icon {
+  font-size: 13px;
+}
+
+.tool-call-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #667eea;
+}
+
+.tool-call-input {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+  background: #f9f9f9;
+  border-radius: 4px;
+  padding: 3px 6px;
+  overflow-x: auto;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  white-space: pre;
+}
+
+.tool-call-executing {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #888;
+  padding: 2px 0;
+}
+
+/* 工具执行结果 */
+.chat-tool-result {
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 13px;
+}
+
+.tool-result-success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.tool-result-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+.tool-result-output {
+  margin: 2px 0 0;
+  font-size: 12px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 120px;
+  overflow-y: auto;
+  color: inherit;
+  opacity: 0.85;
+}
+
+.tool-result-error-msg {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+}
+
+/* 加载中指示器：固定在消息区底部、输入区上方 */
+.chat-loading-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  color: #999;
+  background: #f7f8fa;
+  border-top: 1px solid #f0f0f0;
+  flex-shrink: 0;
+}
+
+.loading-text {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ===================== 输入区 ===================== */
+.chat-input-area {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 12px 20px;
+  background: #fff;
+  border-top: 1px solid #f0f0f0;
+  flex-shrink: 0;
+}
+
+.chat-input {
+  flex: 1;
+  border-radius: 20px !important;
+  padding: 8px 14px !important;
+  resize: none !important;
+  font-size: 15px !important;
+}
+
+.chat-send-btn {
+  border-radius: 20px !important;
+  height: 36px;
+  padding: 0 18px;
+  font-size: 14px;
+}
+
+/* ===================== Markdown 渲染样式 ===================== */
+/* AI 消息内的 markdown 渲染容器 */
+.message-markdown {
+  font-size: 15px;
+  line-height: 1.5;
+  color: inherit;
+  /* 防止子元素的 margin 折叠到容器外部 */
+  display: flow-root;
+}
+
+/* 标题样式 */
+.message-markdown h1,
+.message-markdown h2,
+.message-markdown h3,
+.message-markdown h4,
+.message-markdown h5,
+.message-markdown h6 {
+  margin: 0;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.3;
+}
+.message-markdown h1 { font-size: 18px; }
+.message-markdown h2 { font-size: 16px; }
+.message-markdown h3 { font-size: 15px; }
+.message-markdown h4 { font-size: 14px; }
+
+/* 段落（<p> 已改为 <span display:block>，样式同步更新） */
+.message-markdown p,
+.message-markdown > span[style*="display: block"] {
+  margin: 0 !important;
+  padding: 0;
+  line-height: 1.5;
+  display: block;
+}
+
+/* 相邻块级元素之间不允许任何间隙 */
+.message-markdown p + p,
+.message-markdown > span[style*="display: block"] + p,
+.message-markdown p + span[style*="display: block"],
+.message-markdown > span[style*="display: block"] + span[style*="display: block"] {
+  margin-top: 0 !important;
+}
+
+/* 相邻兄弟块级元素之间不允许任何间隙（覆盖 ul/ol/table/hr/pre 等所有块元素） */
+.message-markdown > * + *,
+.message-markdown > p + *,
+.message-markdown > span[style*="display: block"] + * {
+  margin-top: 0 !important;
+}
+
+/* 表格（GFM） */
+.message-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2px 0;
+  font-size: 13px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #e8e8e8;
+}
+.message-markdown th {
+  background: #f5f5f5;
+  font-weight: 600;
+  text-align: left;
+  padding: 4px 8px;
+  border-bottom: 1px solid #e0e0e0;
+  color: #333;
+}
+.message-markdown td {
+  padding: 3px 8px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #444;
+}
+.message-markdown tr:last-child td {
+  border-bottom: none;
+}
+.message-markdown tr:nth-child(even) td {
+  background: #fafafa;
+}
+.message-markdown tr:hover td {
+  background: #f0f7ff;
+}
+
+/* 代码块 */
+.message-markdown .md-pre {
+  background: #f8f8f8;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  padding: 6px 10px;
+  overflow-x: auto;
+  margin: 2px 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.message-markdown .md-pre code {
+  font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  color: #333;
+  font-size: inherit;
+}
+
+/* 行内代码 */
+.message-markdown .md-code-inline {
+  background: #f0f0f0;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  color: #c7254e;
+}
+
+/* 列表 */
+.message-markdown ul,
+.message-markdown ol {
+  padding-left: 20px;
+  margin: 0;
+}
+.message-markdown li {
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* 分隔线 */
+.message-markdown hr {
+  border: none;
+  border-top: 1px solid #e8e8e8;
+  margin: 4px 0;
+}
+
+/* 全局重置：彻底清除 markdown 解析器生成的每个 p/div 等元素之间的间距 */
+.message-markdown > *:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+.message-markdown > *:last-child {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+.message-markdown > * {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.message-markdown * {
+  margin-block-start: 0 !important;
+  margin-block-end: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* 引用块（blockquote）：放在 * 规则之后以确保 !important 覆盖 */
+.message-markdown blockquote {
+  margin: 4px 0 !important;
+  padding: 0 0 0 12px;
+  border-left: 3px solid #d9d9d9;
+  color: #666;
+}
+
+/* 链接 */
+.message-markdown .md-link {
+  color: #3b82f6;
+  text-decoration: none;
+}
+.message-markdown .md-link:hover {
+  text-decoration: underline;
+}
+
+/* 工具返回的 markdown 内容 */
+.tool-result-md .message-markdown {
+  font-size: 13px;
+  line-height: 1.5;
+}
+.tool-result-md .message-markdown h1,
+.tool-result-md .message-markdown h2,
+.tool-result-md .message-markdown h3 {
+  font-size: 14px;
+  margin: 0;
+}
+.tool-result-md .message-markdown table {
+  font-size: 12px;
+}
+.tool-result-md .message-markdown th,
+.tool-result-md .message-markdown td {
+  padding: 3px 6px;
+}
+
+/* 工具返回的 markdown 内容 - 覆盖 tool-result-output 的样式 */
+.tool-result-md {
+  background: transparent;
+  padding: 0;
+  margin: 2px 0 0;
+  border: none;
+  max-height: none;
+  overflow: visible;
+}

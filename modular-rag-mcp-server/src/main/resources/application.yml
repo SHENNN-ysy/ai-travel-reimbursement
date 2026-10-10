@@ -1,0 +1,60 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: modular-rag-mcp-server
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+# ChromaDB Vector Store
+rag:
+  chroma:
+    host: localhost
+    port: 8000
+    tenant: default_tenant
+    database: default_database
+
+  # LLM Provider selection: openai | azure | deepseek | ollama
+  llm:
+    provider: openai
+    base-url: https://api.openai.com/v1
+    api-key: ${OPENAI_API_KEY:}
+    model: gpt-4o-mini
+    temperature: 0.7
+
+  # Embedding Provider
+  embedding:
+    provider: openai
+    base-url: https://api.openai.com/v1
+    api-key: ${OPENAI_API_KEY:}
+    model: text-embedding-3-small
+    dimension: 1536
+
+  # Lucene BM25 index
+  lucene:
+    index-dir: ./data/lucene-index
+    analyzer: IK
+
+  # Document ingestion
+  ingestion:
+    chunk-size: 500
+    chunk-overlap: 50
+
+  # Retrieval
+  retrieval:
+    top-k: 10
+    rrf-k: 60
+
+  # Trace
+  trace:
+    enabled: true
+    output-dir: ./logs
+
+logging:
+  level:
+    com.rag: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

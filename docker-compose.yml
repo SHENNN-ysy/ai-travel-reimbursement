@@ -1,0 +1,117 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: travel-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?请先在项目根目录创建 .env（参考 .env.example）并配置 DB_PASSWORD}
+      MYSQL_DATABASE: travel_db
+      TZ: Asia/Shanghai
+    # 不映射宿主机端口，避免与本机 MySQL(3306) 冲突；仅供 compose 内网访问
+    volumes:
+      # 首次启动自动执行建表脚本（仅空数据卷时生效）
+      - ./java/MyAI-travel-reimbursement/src/main/resources/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - mysql_data:/var/lib/mysql
+    # 内存调优参数，配合 300M 内存限额
+    command: >-
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --performance-schema=OFF
+      --innodb-buffer-pool-size=64M
+      --innodb-log-buffer-size=8M
+      --table-open-cache=256
+      --thread-cache-size=8
+      --host-cache-size=0
+      --skip-log-bin
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+
+  excel-mcp:
+    build:
+      context: ./excel-mcp
+      dockerfile: Dockerfile
+    container_name: excel-mcp
+    restart: always
+    environment:
+      EXCEL_FILES_PATH: /opt/travel-reimbursement/travel-files
+      FASTMCP_PORT: 8017
+      UV_INDEX_URL: https://pypi.tuna.tsinghua.edu.cn/simple
+    ports:
+      - "8017:8017"
+    volumes:
+      - travel_files:/opt/travel-reimbursement/travel-files
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; s=socket.socket(); s.connect(('localhost', 8017)); s.close()"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 160M
+
+  backend:
+    build:
+      context: ./java/MyAI-travel-reimbursement
+      dockerfile: Dockerfile
+    container_name: travel-backend
+    restart: always
+    working_dir: /app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/travel_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
+      # 敏感信息统一从根目录 .env 注入（Docker Compose 自动加载）
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME:-root}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:?请先在项目根目录创建 .env 并配置 DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?请先在项目根目录创建 .env 并配置 JWT_SECRET}
+      AI_API_KEY: ${AI_API_KEY:?请先在项目根目录创建 .env 并配置 AI_API_KEY}
+      AI_BASE_URL: ${AI_BASE_URL:-https://api.moonshot.cn/v1}
+      AI_MODEL: ${AI_MODEL:-kimi-k2.5}
+      APP_BASE_URL: http://localhost:8088/api/v1
+      STORAGE_BASE_PATH: /opt/travel-reimbursement/travel-files
+      EXCEL_MCP_URL: http://excel-mcp:8017/mcp
+      # JVM 内存调优，配合 1024M 容器限额
+      JAVA_TOOL_OPTIONS: "-Xmx512m -XX:MaxMetaspaceSize=192m -XX:ReservedCodeCacheSize=64m -Xss512k"
+    ports:
+      - "8080:8080"
+    volumes:
+      - travel_files:/opt/travel-reimbursement/travel-files
+      - ./docs:/opt/travel-reimbursement/docs:ro
+    depends_on:
+      mysql:
+        condition: service_healthy
+      excel-mcp:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+
+  frontend:
+    build:
+      context: ./travel-reimbursement-ai
+      dockerfile: Dockerfile
+    container_name: travel-frontend
+    restart: always
+    ports:
+      # 宿主机 80 端口被占用，改用 8088
+      - "8088:80"
+    depends_on:
+      - backend
+    deploy:
+      resources:
+        limits:
+          memory: 32M
+
+volumes:
+  mysql_data:
+  travel_files:
