@@ -4,6 +4,8 @@ import type {
   AgentSessionVO,
   AgentChatItem,
   AgentMessageVO,
+  WorkflowTodoItem,
+  WorkflowRunStatus,
 } from '@/types';
 
 interface AgentState {
@@ -266,6 +268,28 @@ const agentSlice = createSlice({
       state.chatLoading = action.payload;
     },
 
+    /** 新增或更新一键报销工作流的 TodoList 进度卡片（同一 runId 更新同一条） */
+    upsertWorkflowTodoList: (
+      state,
+      action: PayloadAction<{ runId: string; status: WorkflowRunStatus; items: WorkflowTodoItem[] }>
+    ) => {
+      const existing = state.chatItems.find((it) => it.workflowRunId === action.payload.runId);
+      if (existing) {
+        existing.workflowTodos = action.payload.items;
+        existing.workflowStatus = action.payload.status;
+      } else {
+        state.chatItems.push({
+          id: `workflow-${action.payload.runId}`,
+          role: 'assistant',
+          content: '',
+          workflowRunId: action.payload.runId,
+          workflowTodos: action.payload.items,
+          workflowStatus: action.payload.status,
+          timestamp: new Date().toISOString(),
+        });
+      }
+    },
+
     resetAgentState: () => initialState,
   },
 
@@ -343,6 +367,7 @@ export const {
   updateAssistantMessageContent,
   appendAssistantContent,
   setChatLoading,
+  upsertWorkflowTodoList,
   resetAgentState,
 } = agentSlice.actions;
 

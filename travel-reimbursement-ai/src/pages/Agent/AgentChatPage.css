@@ -368,7 +368,8 @@
   display: block;
   margin: 0;
   font-family: inherit;
-  white-space: pre-wrap;
+  /* 注意：不能加 white-space: pre-wrap —— react-markdown 会在块级元素之间输出 \n 文本节点，
+     pre-wrap 会把它们渲染成大量空行 */
   word-break: break-word;
   font-size: 15px;
   line-height: 1.5;
@@ -593,21 +594,6 @@
   display: block;
 }
 
-/* 相邻块级元素之间不允许任何间隙 */
-.message-markdown p + p,
-.message-markdown > span[style*="display: block"] + p,
-.message-markdown p + span[style*="display: block"],
-.message-markdown > span[style*="display: block"] + span[style*="display: block"] {
-  margin-top: 0 !important;
-}
-
-/* 相邻兄弟块级元素之间不允许任何间隙（覆盖 ul/ol/table/hr/pre 等所有块元素） */
-.message-markdown > * + *,
-.message-markdown > p + *,
-.message-markdown > span[style*="display: block"] + * {
-  margin-top: 0 !important;
-}
-
 /* 表格（GFM） */
 .message-markdown table {
   width: 100%;
@@ -689,7 +675,7 @@
   margin: 4px 0;
 }
 
-/* 全局重置：彻底清除 markdown 解析器生成的每个 p/div 等元素之间的间距 */
+/* 首尾元素不留外边距，避免撑大气泡 */
 .message-markdown > *:first-child {
   margin-top: 0 !important;
   padding-top: 0 !important;
@@ -698,15 +684,9 @@
   margin-bottom: 0 !important;
   padding-bottom: 0 !important;
 }
-.message-markdown > * {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-.message-markdown * {
-  margin-block-start: 0 !important;
-  margin-block-end: 0 !important;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
+/* 相邻块级元素之间的间距（pre-wrap 移除后，块间不再有换行文本节点，需要用 margin 分隔） */
+.message-markdown > * + * {
+  margin-top: 8px;
 }
 
 /* 引用块（blockquote）：放在 * 规则之后以确保 !important 覆盖 */
@@ -753,4 +733,44 @@
   border: none;
   max-height: none;
   overflow: visible;
+}
+
+/* 一键报销工作流 TodoList 进度卡片 */
+.workflow-todo-card {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 12px 14px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  min-width: 280px;
+  max-width: 420px;
+}
+
+.workflow-todo-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.workflow-todo-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.workflow-todo-card .ant-steps-item-description {
+  font-size: 12px;
+  max-width: 360px !important;
+  word-break: break-all;
+}
+
+.workflow-todo-abort {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: #fff2f0;
+  border: 1px solid #ffccc7;
+  border-radius: 6px;
+  color: #cf1322;
+  font-size: 12px;
+  line-height: 1.6;
 }

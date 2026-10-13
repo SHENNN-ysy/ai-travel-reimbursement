@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,6 +39,7 @@ import java.util.Objects;
 /**
  * 项目服务实现
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
@@ -240,10 +243,49 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Project getProjectByName(String name) {
         Long userId = UserContext.getUserId();
-        return projectMapper.selectOne(
+        if (name == null || name.isBlank()) {
+            return null;
+        }
+        String query = name.trim();
+        // 1. 精确匹配
+        List<Project> exactMatches = projectMapper.selectList(
                 new LambdaQueryWrapper<Project>()
                         .eq(Project::getUserId, userId)
-                        .eq(Project::getName, name));
+                        .eq(Project::getName, query));
+        if (!exactMatches.isEmpty()) {
+            return exactMatches.get(0);
+        }
+        // 2. 模糊兜底：项目名与用户输入互相包含即视为候选
+        //    （如用户输入「北京出差项目」可命中库里的「北京出差」）
+        List<Project> candidates = projectMapper.selectList(
+                        new LambdaQueryWrapper<Project>().eq(Project::getUserId, userId))
+                .stream()
+                .filter(p -> p.getName() != null && !p.getName().isBlank())
+                .filter(p -> p.getName().contains(query) || query.contains(p.getName()))
+                .toList();
+        if (candidates.isEmpty()) {
+            return null;
+        }
+        if (candidates.size() > 1) {
+            log.warn("项目名【{}】模糊匹配到 {} 个项目，取名称最长者", query, candidates.size());
+        }
+        // 多个候选时取名称最长（最具体）的一个，id 次序兜底保证确定性
+        return candidates.stream()
+                .max(Comparator.comparingInt((Project p) -> p.getName().length())
+                        .thenComparing(Project::getId))
+                .orElse(null);
+    }
+
+    @Override
+    public Project getOwnedProject(Long id) {
+        if (id == null) {
+            return null;
+        }
+        Project project = projectMapper.selectById(id);
+        if (project == null || !Objects.equals(UserContext.getUserId(), project.getUserId())) {
+            return null;
+        }
+        return project;
     }
 
     @Override

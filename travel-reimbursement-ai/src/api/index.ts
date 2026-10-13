@@ -693,7 +693,7 @@ export function updateSettings(data: SettingsUpdateDTO): Promise<SettingsVO> {
 // ==================== 7. Agent 对话模块 (/projects/{projectId}/agent) ====================
 
 // --- SSE 事件类型 ---
-export type AgentEventType = 'thinking' | 'tool_call' | 'tool_result' | 'message' | 'done' | 'error';
+export type AgentEventType = 'thinking' | 'tool_call' | 'tool_result' | 'message' | 'done' | 'error' | 'workflow_todo';
 
 // --- SSE 事件数据 ---
 export interface AgentThinkingEvent {

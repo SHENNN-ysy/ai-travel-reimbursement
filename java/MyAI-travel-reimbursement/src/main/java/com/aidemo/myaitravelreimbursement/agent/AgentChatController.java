@@ -23,7 +23,7 @@ import java.util.Objects;
  */
 @Slf4j
 @RestController
-@RequestMapping("/agent")
+@RequestMapping("/projects/{projectId}/agent")
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "ai.provider", havingValue = "langchain4j", matchIfMissing = true)
 @Tag(name = "AI Agent 对话", description = "AI Agent 对话接口")
