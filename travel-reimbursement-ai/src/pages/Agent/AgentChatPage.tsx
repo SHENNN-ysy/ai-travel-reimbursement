@@ -10,6 +10,7 @@ import {
   message,
   Badge,
   Select,
+  Alert,
 } from 'antd';
 import {
   SendOutlined,
@@ -18,12 +19,10 @@ import {
   DeleteOutlined,
   ReloadOutlined,
   ThunderboltOutlined,
-  FileTextOutlined,
   TableOutlined,
   ExportOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   fetchAgentSessions,
@@ -45,10 +44,12 @@ import {
   setChatLoading,
   createAgentSession,
   setMessageComplete,
+  upsertWorkflowTodoList,
 } from '@/store/slices/agentSlice';
 import { fetchProjectDetail, fetchProjects } from '@/store/slices/projectSlice';
-import type { AgentChatItem } from '@/types';
+import type { AgentChatItem, WorkflowTodoItem, WorkflowRunStatus } from '@/types';
 import { MessageRenderer } from '@/components/common/MessageRenderer';
+import { WorkflowTodoCard } from '@/components/agent/WorkflowTodoCard';
 import dayjs from 'dayjs';
 import './AgentChatPage.css';
 
@@ -115,6 +116,7 @@ const TOOL_LABELS: Record<string, string> = {
   auto_fill_report: '智能填充报表',
   export_excel: '导出 Excel',
   export_package: '导出报销项目',
+  runFullReimbursementWorkflow: '一键报销工作流',
 };
 
 // 下载链接正则（export-package 和 reports/export）
@@ -186,7 +188,6 @@ const QUICK_ACTIONS = [
 ];
 
 export const AgentChatPage: React.FC = () => {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   // From Redux get current project and Agent state
@@ -306,6 +307,12 @@ export const AgentChatPage: React.FC = () => {
   const sendMessage = useCallback(
     async (content: string) => {
       if (!content.trim()) return;
+
+      // 开启对话前必须先选择锚定项目
+      if (!projectId) {
+        message.warning('请先在左侧「选择项目」中选择报销项目，再开始对话');
+        return;
+      }
 
       cancelPreviousRequest();
 
@@ -652,6 +659,14 @@ export const AgentChatPage: React.FC = () => {
           }
         }
         break;
+      case 'workflow_todo':
+        if (typeof rawData === 'object' && rawData !== null && 'runId' in rawData && 'items' in rawData) {
+          const d = rawData as { runId: string; status: WorkflowRunStatus; items: WorkflowTodoItem[] };
+          if (Array.isArray(d.items)) {
+            dispatch(upsertWorkflowTodoList({ runId: d.runId, status: d.status, items: d.items }));
+          }
+        }
+        break;
       case 'done':
         // 停止所有打字动画，并将最终完整内容写入 Redux
         // 同时标记所有流式 assistant 消息为已完成，触发 markdown 富文本渲染
@@ -749,6 +764,19 @@ export const AgentChatPage: React.FC = () => {
       );
     }
 
+    if (item.workflowTodos) {
+      return (
+        <div key={item.id} className="chat-item chat-item-assistant">
+          <div className="chat-avatar chat-avatar-assistant">
+            <RobotOutlined />
+          </div>
+          <div className="chat-content-wrapper">
+            <WorkflowTodoCard items={item.workflowTodos} status={item.workflowStatus} />
+          </div>
+        </div>
+      );
+    }
+
     if (item.isReasoning) {
       const reasoningDisplayed = typingStateMap.current.has(item.id)
         ? item.content.slice(0, typingStateMap.current.get(item.id)!.displayedLength)
@@ -803,73 +831,8 @@ export const AgentChatPage: React.FC = () => {
     <div className="agent-chat-page">
       {/* 左侧边栏 */}
       <aside className="agent-sidebar">
-        <div className="sidebar-header">
-          <Text strong className="sidebar-title">会话列表</Text>
-          <Button
-            type="text"
-            icon={<PlusOutlined />}
-            size="small"
-            onClick={handleNewSession}
-            title="新建会话"
-          >
-            新建对话
-          </Button>
-        </div>
-
-        <div className="sidebar-sessions">
-          <Spin spinning={sessionsLoading}>
-            <List
-              size="small"
-              dataSource={sessions}
-              locale={{ emptyText: '暂无会话记录' }}
-              renderItem={(session) => (
-                <List.Item
-                  className={`session-item ${
-                    session.sessionId === currentSessionId ? 'session-item-active' : ''
-                  }`}
-                  onClick={() => handleSelectSession(session.sessionId)}
-                  actions={[
-                    <Popconfirm
-                      key="delete"
-                      title="确定删除此会话？"
-                      onConfirm={(e) => {
-                        e?.stopPropagation();
-                        handleDeleteSession(session.sessionId);
-                      }}
-                      okText="删除"
-                      cancelText="取消"
-                      okButtonProps={{ danger: true }}
-                    >
-                      <DeleteOutlined
-                        className="session-delete-btn"
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    </Popconfirm>,
-                  ]}
-                >
-                  <List.Item.Meta
-                    title={
-                      <span className="session-title">
-                        {session.lastMessage || '新会话'}
-                        {session.status === 0 && (
-                          <Badge status="processing" className="session-badge" />
-                        )}
-                      </span>
-                    }
-                    description={
-                      <span className="session-time">
-                        {dayjs(session.updatedAt).format('MM-DD HH:mm')}
-                      </span>
-                    }
-                  />
-                </List.Item>
-              )}
-            />
-          </Spin>
-        </div>
-
-        {/* Project selector */}
-        <div className="sidebar-bottom">
+        {/* 项目信息与功能面板 */}
+        <div className="sidebar-panel">
           <div className="sidebar-project-selector">
             <Text strong className="sidebar-title">选择项目</Text>
             <Select
@@ -941,25 +904,87 @@ export const AgentChatPage: React.FC = () => {
                 icon={action.icon}
                 className="quick-action-btn"
                 onClick={() => handleQuickAction(action.prompt)}
+                disabled={!projectId}
                 block
               >
                 {action.label}
               </Button>
             ))}
           </div>
-
-          {/* 返回按钮 */}
-          <div className="sidebar-footer">
-            <Button
-              type="text"
-              icon={<FileTextOutlined />}
-              className="back-btn"
-              onClick={() => navigate('/archive')}
-            >
-              返回项目
-            </Button>
-          </div>
         </div>
+
+        {/* 新建会话面板 */}
+        <div className="sidebar-new-session">
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            block
+            size="large"
+            className="new-session-btn"
+            onClick={handleNewSession}
+            disabled={!projectId}
+            title={projectId ? '新建会话' : '请先选择报销项目'}
+          >
+            新建对话
+          </Button>
+        </div>
+
+        <div className="sidebar-header">
+          <Text strong className="sidebar-title">会话列表</Text>
+        </div>
+
+        <div className="sidebar-sessions">
+          <Spin spinning={sessionsLoading}>
+            <List
+              size="small"
+              dataSource={sessions}
+              locale={{ emptyText: '暂无会话记录' }}
+              renderItem={(session) => (
+                <List.Item
+                  className={`session-item ${
+                    session.sessionId === currentSessionId ? 'session-item-active' : ''
+                  }`}
+                  onClick={() => handleSelectSession(session.sessionId)}
+                  actions={[
+                    <Popconfirm
+                      key="delete"
+                      title="确定删除此会话？"
+                      onConfirm={(e) => {
+                        e?.stopPropagation();
+                        handleDeleteSession(session.sessionId);
+                      }}
+                      okText="删除"
+                      cancelText="取消"
+                      okButtonProps={{ danger: true }}
+                    >
+                      <DeleteOutlined
+                        className="session-delete-btn"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </Popconfirm>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    title={
+                      <span className="session-title">
+                        {session.lastMessage || '新会话'}
+                        {session.status === 0 && (
+                          <Badge status="processing" className="session-badge" />
+                        )}
+                      </span>
+                    }
+                    description={
+                      <span className="session-time">
+                        {dayjs(session.updatedAt).format('MM-DD HH:mm')}
+                      </span>
+                    }
+                  />
+                </List.Item>
+              )}
+            />
+          </Spin>
+        </div>
+
       </aside>
 
       {/* 主对话区 */}
@@ -968,6 +993,11 @@ export const AgentChatPage: React.FC = () => {
           <div className="chat-header-left">
             <RobotOutlined className="chat-header-icon" />
             <span className="chat-header-title">AI 报销助手</span>
+            {currentProject && (
+              <span style={{ marginLeft: 12, fontSize: 13, color: '#52c41a' }}>
+                📌 当前项目：{currentProject.name}
+              </span>
+            )}
           </div>
           <div className="chat-header-right">
             <Button
@@ -983,6 +1013,15 @@ export const AgentChatPage: React.FC = () => {
         </div>
 
         <div className="chat-messages" ref={chatListContainerRef}>
+          {!projectId && (
+            <Alert
+              type="info"
+              showIcon
+              message="请先选择报销项目"
+              description="在左侧「选择项目」下拉框中选择一个报销项目后，才能开启对话。对话将锚定该项目，一键报销等操作会自动针对当前项目执行。"
+              style={{ margin: '12px 16px 0' }}
+            />
+          )}
           <div className="chat-list-container">
             <div className="chat-list">
               {chatItems.map(renderChatItem)}
@@ -1002,16 +1041,16 @@ export const AgentChatPage: React.FC = () => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="请输入消息，Enter 发送，Shift+Enter 换行..."
+            placeholder={projectId ? '请输入消息，Enter 发送，Shift+Enter 换行...' : '请先在左侧「选择项目」中选择报销项目，再开始对话...'}
             autoSize={{ minRows: 1, maxRows: 4 }}
             className="chat-input"
-            disabled={chatLoading}
+            disabled={!projectId || chatLoading}
           />
           <Button
             type="primary"
             icon={<SendOutlined />}
             onClick={() => sendMessage(inputValue)}
-            disabled={!inputValue.trim() || chatLoading}
+            disabled={!projectId || !inputValue.trim() || chatLoading}
             className="chat-send-btn"
           >
             发送

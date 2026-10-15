@@ -2,6 +2,8 @@ package com.aidemo.myaitravelreimbursement.agent.tools;
 
 import com.aidemo.myaitravelreimbursement.agent.memory.PersistentMemoryManager;
 import com.aidemo.myaitravelreimbursement.agent.memory.PersistentMemoryManager.MemoryType;
+import dev.langchain4j.agent.tool.P;
+import dev.langchain4j.agent.tool.Tool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -34,8 +36,13 @@ public class MemoryTools {
      * @param howToApply  在未来对话中如何应用
      * @return 保存结果（文件名）
      */
-    public String saveMemory(String projectId, String type, String name,
-                             String content, String why, String howToApply) {
+    @Tool("保存一条跨会话持久记忆。当用户告知需要长期记住的偏好、反馈或项目信息时使用。")
+    public String saveMemory(@P("projectId") String projectId,
+                             @P("记忆类型：USER / FEEDBACK / PROJECT / REFERENCE") String type,
+                             @P("记忆名称（简短，10字以内）") String name,
+                             @P("记忆的具体内容") String content,
+                             @P("为什么这条信息值得保留") String why,
+                             @P("在未来对话中如何应用") String howToApply) {
         try {
             MemoryType memoryType = MemoryType.fromString(type);
             String filename = persistentMemoryManager.saveMemory(

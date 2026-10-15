@@ -5,6 +5,7 @@ import com.aidemo.myaitravelreimbursement.agent.extractor.SessionSummaryExtracto
 import com.aidemo.myaitravelreimbursement.agent.memory.PersistentMemoryManager;
 import com.aidemo.myaitravelreimbursement.agent.memory.SessionMemoryManager;
 import com.aidemo.myaitravelreimbursement.agent.service.AgentService;
+import com.aidemo.myaitravelreimbursement.agent.workflow.SseEmitterRegistry;
 import com.aidemo.myaitravelreimbursement.common.UserContext;
 import com.aidemo.myaitravelreimbursement.rag.trace.TraceCollector;
 import com.aidemo.myaitravelreimbursement.rag.trace.TraceContext;
@@ -49,6 +50,7 @@ public class AgentExecutorRunner {
     private final PersistentMemoryExtractor persistentMemoryExtractor;
     private final TraceContext traceContext;
     private final TraceCollector traceCollector;
+    private final SseEmitterRegistry sseEmitterRegistry;
 
     @Qualifier("sseScheduler")
     private final ScheduledExecutorService sseScheduler;
@@ -67,6 +69,9 @@ public class AgentExecutorRunner {
         emitter.onCompletion(() -> log.debug("SSE completed: projectId={}, sessionId={}", projectId, sessionId));
         emitter.onTimeout(() -> log.debug("SSE timeout: projectId={}, sessionId={}", projectId, sessionId));
         emitter.onError(e -> log.error("SSE error: projectId={}, sessionId={}", projectId, sessionId, e));
+
+        // 登记 emitter，供工作流引擎等 Agent 主循环之外的调用方推送事件
+        sseEmitterRegistry.register(sessionId, emitter);
 
         AtomicBoolean completed = new AtomicBoolean(false);
         long startTime = System.currentTimeMillis();
@@ -157,6 +162,7 @@ public class AgentExecutorRunner {
 
                                 sendEvent(emitter, "done", "{\"summary\": \"\"}");
                                 emitter.complete();
+                                sseEmitterRegistry.unregister(sessionId, emitter);
                                 UserContext.clearCurrentSnapshot();
                                 traceContext.clear();
                                 TraceDataHolder.clear();
@@ -176,6 +182,7 @@ public class AgentExecutorRunner {
                                 saveAssistantMessage(sessionId, assistantContent.toString());
                                 sendEvent(emitter, "error", "{\"error\": \"" + escapeJson(error.getMessage()) + "\"}");
                                 emitter.completeWithError(error);
+                                sseEmitterRegistry.unregister(sessionId, emitter);
                                 UserContext.clearCurrentSnapshot();
                                 traceContext.clear();
                                 TraceDataHolder.clear();
@@ -196,6 +203,7 @@ public class AgentExecutorRunner {
                     saveAssistantMessage(sessionId, assistantContent.toString());
                     sendEvent(emitter, "error", "{\"error\": \"" + escapeJson(e.getMessage()) + "\"}");
                     emitter.completeWithError(e);
+                    sseEmitterRegistry.unregister(sessionId, emitter);
                     UserContext.clearCurrentSnapshot();
                     traceContext.clear();
                     TraceDataHolder.clear();
@@ -237,9 +245,12 @@ public class AgentExecutorRunner {
 
     private boolean sendEvent(SseEmitter emitter, String eventName, String data) {
         try {
-            emitter.send(SseEmitter.event()
-                    .name(eventName)
-                    .data(data));
+            // 与 SseEmitterRegistry 的发送互斥，防止并发推送撕坏 SSE 帧
+            synchronized (emitter) {
+                emitter.send(SseEmitter.event()
+                        .name(eventName)
+                        .data(data));
+            }
             return true;
         } catch (Exception e) {
             log.warn("Failed to send SSE event: {}, error: {}", eventName, e.getMessage());

@@ -9,6 +9,8 @@ import com.aidemo.myaitravelreimbursement.agent.tools.MemoryTools;
 import com.aidemo.myaitravelreimbursement.agent.tools.ProjectTools;
 import com.aidemo.myaitravelreimbursement.agent.tools.RecognitionTools;
 import com.aidemo.myaitravelreimbursement.agent.tools.ReportTools;
+import com.aidemo.myaitravelreimbursement.agent.tools.WorkflowTools;
+import com.aidemo.myaitravelreimbursement.agent.workflow.WorkflowEngine;
 import dev.langchain4j.mcp.McpToolProvider;
 import dev.langchain4j.mcp.client.DefaultMcpClient;
 import dev.langchain4j.mcp.client.McpClient;
@@ -51,6 +53,8 @@ public class ReimbursementAgent {
     private final RecognitionTools recognitionTools;
     private final ReportTools reportTools;
     private final MemoryTools memoryTools;
+    private final WorkflowEngine workflowEngine;
+    private final com.aidemo.myaitravelreimbursement.mapper.ProjectMapper projectMapper;
 
     @Resource
     private RetrievalAugmentor retrievalAugmentor;
@@ -114,6 +118,22 @@ public class ReimbursementAgent {
         String persistentContext = persistentMemoryManager.loadPersistentContext(projectId, null);
         String enhancedPrompt = buildEnhancedPrompt(sessionSummary, persistentContext);
 
+        // 对话锚定项目：注入系统提示并传递给一键报销工作流工具
+        Long anchoredProjectId = null;
+        String anchoredProjectName = null;
+        try {
+            com.aidemo.myaitravelreimbursement.entity.Project anchored =
+                    projectMapper.selectById(Long.valueOf(projectId));
+            if (anchored != null) {
+                anchoredProjectId = anchored.getId();
+                anchoredProjectName = anchored.getName();
+                enhancedPrompt += "\n\n【当前锚定项目】\n本对话已锚定项目「" + anchoredProjectName + "」(ID=" + anchoredProjectId
+                        + ")，用户所有涉及项目的操作（包括一键报销全流程）默认针对该项目，调用相关工具时直接使用该项目，无需再向用户确认项目名称。";
+            }
+        } catch (Exception e) {
+            log.warn("解析锚定项目失败: projectId={}", projectId, e);
+        }
+
         FileSystemSkill skill = ClassPathSkillLoader.loadSkill("skills/full");
         Skill skill_full = Skill.builder()
                 .name(skill.name())
@@ -128,12 +148,13 @@ public class ReimbursementAgent {
                 .streamingChatModel(chatStreamModel)
                 .chatMemory(sessionMemoryManager.getOrCreateMemory(sessionId))
                 .retrievalAugmentor(retrievalAugmentor)
-                .tools(projectTools, fileTools, recognitionTools, reportTools, memoryTools)
+                .tools(projectTools, fileTools, recognitionTools, reportTools, memoryTools,
+                        new WorkflowTools(sessionId, anchoredProjectId, anchoredProjectName, workflowEngine))
                 .toolProvider(skills.toolProvider())
                 .toolProvider(excelMcpToolProvider)
                 .systemMessage(enhancedPrompt)
                 .systemMessageTransformer(systemMessage -> systemMessage + "\n您可以使用以下技能:\n" + skills.formatAvailableSkills()
-                        + "\n当用户的请求进行「一键报销」或「全流程报销」时，在继续之前，首先使用\"activate_skill\"工具激活它。");
+                        + "\n当用户请求「一键报销」「全流程报销」或「帮我走完全流程」时，直接调用 runFullReimbursementWorkflow 工具执行完整流程，不要逐一手动调用其他工具，也无需激活技能。");
 
         return builder.build();
     }

@@ -1,15 +1,14 @@
 /* 使用说明弹窗 */
 .help-trigger-btn {
-  color: #6B7280;
-  font-size: 13px;
-  height: 32px;
   display: inline-flex;
   align-items: center;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
 }
 
 .help-trigger-btn:hover {
-  color: #3B82F6;
-  background: #EFF6FF;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+  transform: translateY(-1px);
 }
 
 .help-modal .ant-modal-content {

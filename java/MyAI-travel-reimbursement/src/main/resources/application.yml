@@ -75,7 +75,7 @@ ai:
 #  provider: langchain4j
   base-url: ${AI_BASE_URL:https://api.moonshot.cn/v1}
   api-key: ${AI_API_KEY:}
-  model: ${AI_MODEL:kimi-k2.5}
+  model: ${AI_MODEL:kimi-k2.6}
 
   #      智谱
 #  base-url: https://open.bigmodel.cn/api/paas/v4/

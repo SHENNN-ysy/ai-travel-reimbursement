@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Form, Input, Button, Card, message, Typography, Divider } from 'antd';
+import { Form, Input, Button, Card, message, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -111,6 +111,11 @@ const LoginPage: React.FC = () => {
           </Form.Item>
         </Form>
 
+        <div style={{ textAlign: 'center', marginBottom: 16 }}>
+          <Text type="secondary">还没有账号？</Text>
+          <Link to="/register" style={{ marginLeft: 6 }}>立即注册</Link>
+        </div>
+
         <Button
           block
           size="large"
@@ -121,11 +126,8 @@ const LoginPage: React.FC = () => {
           一键登录
         </Button>
 
-        <Divider style={{ margin: '16px 0' }} />
-
-        <div style={{ textAlign: 'center' }}>
-          <Text type="secondary">还没有账号？</Text>
-          <Link to="/register" style={{ marginLeft: 6 }}>立即注册</Link>
+        <div style={{ textAlign: 'center', marginTop: 12 }}>
+          <Text type="secondary">不想注册？就一键登录吧</Text>
         </div>
       </Card>
     </div>

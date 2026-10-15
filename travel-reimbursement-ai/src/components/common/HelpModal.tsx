@@ -58,7 +58,8 @@ export const HelpModal: React.FC = () => {
   return (
     <>
       <Button
-        type="text"
+        type="primary"
+        size="large"
         icon={<QuestionCircleOutlined />}
         onClick={() => setVisible(true)}
         className="help-trigger-btn"

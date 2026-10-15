@@ -7,6 +7,9 @@ travel-files/
 models/
 travel-reimbursement-ai.zip
 
+# 第三方源码（完整 git 工程，仅本地阅读/修改，不入本仓库）
+excel-mcp/excel-mcp-server/
+
 # 冗余目录（Dockerfile/nginx.conf 与 travel-reimbursement-ai 内重复）
 frontend/
 

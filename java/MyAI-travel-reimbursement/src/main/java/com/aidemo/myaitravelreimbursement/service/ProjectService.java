@@ -22,6 +22,11 @@ public interface ProjectService {
 
     Project getProjectByName(String name);
 
+    /**
+     * 按 ID 获取项目并校验归属当前用户；不存在或无权访问时返回 null
+     */
+    Project getOwnedProject(Long id);
+
     void markAsProcessed(Long id);
 
     ProjectVO update(Long id, ProjectUpdateDTO dto);

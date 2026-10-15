@@ -410,7 +410,7 @@ export type ReceiptType =
 // ============================================================
 
 // SSE 事件类型
-export type AgentEventType = 'thinking' | 'reasoning' | 'tool_call' | 'tool_result' | 'message' | 'done' | 'error';
+export type AgentEventType = 'thinking' | 'reasoning' | 'tool_call' | 'tool_result' | 'message' | 'done' | 'error' | 'workflow_todo';
 
 // SSE 事件数据
 export interface AgentThinkingEvent {
@@ -448,6 +448,23 @@ export interface AgentErrorEvent {
   data: { message: string };
 }
 
+// 一键报销工作流 TodoList 进度
+export type WorkflowTodoStatus = 'pending' | 'running' | 'success' | 'failed' | 'skipped';
+
+export interface WorkflowTodoItem {
+  key: string;
+  label: string;
+  status: WorkflowTodoStatus;
+  message?: string;
+}
+
+export type WorkflowRunStatus = 'running' | 'completed' | 'failed';
+
+export interface AgentWorkflowTodoEvent {
+  type: 'workflow_todo';
+  data: { runId: string; status: WorkflowRunStatus; items: WorkflowTodoItem[] };
+}
+
 export type AgentSSEEvent =
   | AgentThinkingEvent
   | AgentReasoningEvent
@@ -455,7 +472,8 @@ export type AgentSSEEvent =
   | AgentToolResultEvent
   | AgentMessageEvent
   | AgentDoneEvent
-  | AgentErrorEvent;
+  | AgentErrorEvent
+  | AgentWorkflowTodoEvent;
 
 // 会话消息
 export interface AgentMessageVO {
@@ -500,4 +518,8 @@ export interface AgentChatItem {
   timestamp?: string;
   /** 消息内容是否已渲染完成（用于判断是否走 markdown 富文本渲染） */
   isComplete?: boolean;
+  /** 一键报销工作流进度卡片：同一 runId 的事件更新同一条对话项 */
+  workflowRunId?: string;
+  workflowTodos?: WorkflowTodoItem[];
+  workflowStatus?: WorkflowRunStatus;
 }
