@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
 import type { Components } from 'react-markdown';
 
 interface MessageRendererProps {
@@ -67,7 +68,8 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content, class
 
   return (
     <div className={`message-markdown ${className ?? ''}`}>
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+      {/* remark-breaks：单换行渲染为 <br>（与 Kimi 网页端一致），避免中文内容粘连 */}
+      <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={components}>
         {processed}
       </ReactMarkdown>
     </div>

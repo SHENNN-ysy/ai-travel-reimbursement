@@ -19,12 +19,10 @@ import {
   DeleteOutlined,
   ReloadOutlined,
   ThunderboltOutlined,
-  FileTextOutlined,
   TableOutlined,
   ExportOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   fetchAgentSessions,
@@ -190,7 +188,6 @@ const QUICK_ACTIONS = [
 ];
 
 export const AgentChatPage: React.FC = () => {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   // From Redux get current project and Agent state
@@ -834,74 +831,8 @@ export const AgentChatPage: React.FC = () => {
     <div className="agent-chat-page">
       {/* 左侧边栏 */}
       <aside className="agent-sidebar">
-        <div className="sidebar-header">
-          <Text strong className="sidebar-title">会话列表</Text>
-          <Button
-            type="text"
-            icon={<PlusOutlined />}
-            size="small"
-            onClick={handleNewSession}
-            disabled={!projectId}
-            title={projectId ? '新建会话' : '请先选择报销项目'}
-          >
-            新建对话
-          </Button>
-        </div>
-
-        <div className="sidebar-sessions">
-          <Spin spinning={sessionsLoading}>
-            <List
-              size="small"
-              dataSource={sessions}
-              locale={{ emptyText: '暂无会话记录' }}
-              renderItem={(session) => (
-                <List.Item
-                  className={`session-item ${
-                    session.sessionId === currentSessionId ? 'session-item-active' : ''
-                  }`}
-                  onClick={() => handleSelectSession(session.sessionId)}
-                  actions={[
-                    <Popconfirm
-                      key="delete"
-                      title="确定删除此会话？"
-                      onConfirm={(e) => {
-                        e?.stopPropagation();
-                        handleDeleteSession(session.sessionId);
-                      }}
-                      okText="删除"
-                      cancelText="取消"
-                      okButtonProps={{ danger: true }}
-                    >
-                      <DeleteOutlined
-                        className="session-delete-btn"
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    </Popconfirm>,
-                  ]}
-                >
-                  <List.Item.Meta
-                    title={
-                      <span className="session-title">
-                        {session.lastMessage || '新会话'}
-                        {session.status === 0 && (
-                          <Badge status="processing" className="session-badge" />
-                        )}
-                      </span>
-                    }
-                    description={
-                      <span className="session-time">
-                        {dayjs(session.updatedAt).format('MM-DD HH:mm')}
-                      </span>
-                    }
-                  />
-                </List.Item>
-              )}
-            />
-          </Spin>
-        </div>
-
-        {/* Project selector */}
-        <div className="sidebar-bottom">
+        {/* 项目信息与功能面板 */}
+        <div className="sidebar-panel">
           <div className="sidebar-project-selector">
             <Text strong className="sidebar-title">选择项目</Text>
             <Select
@@ -980,19 +911,80 @@ export const AgentChatPage: React.FC = () => {
               </Button>
             ))}
           </div>
-
-          {/* 返回按钮 */}
-          <div className="sidebar-footer">
-            <Button
-              type="text"
-              icon={<FileTextOutlined />}
-              className="back-btn"
-              onClick={() => navigate('/archive')}
-            >
-              返回项目
-            </Button>
-          </div>
         </div>
+
+        {/* 新建会话面板 */}
+        <div className="sidebar-new-session">
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            block
+            size="large"
+            className="new-session-btn"
+            onClick={handleNewSession}
+            disabled={!projectId}
+            title={projectId ? '新建会话' : '请先选择报销项目'}
+          >
+            新建对话
+          </Button>
+        </div>
+
+        <div className="sidebar-header">
+          <Text strong className="sidebar-title">会话列表</Text>
+        </div>
+
+        <div className="sidebar-sessions">
+          <Spin spinning={sessionsLoading}>
+            <List
+              size="small"
+              dataSource={sessions}
+              locale={{ emptyText: '暂无会话记录' }}
+              renderItem={(session) => (
+                <List.Item
+                  className={`session-item ${
+                    session.sessionId === currentSessionId ? 'session-item-active' : ''
+                  }`}
+                  onClick={() => handleSelectSession(session.sessionId)}
+                  actions={[
+                    <Popconfirm
+                      key="delete"
+                      title="确定删除此会话？"
+                      onConfirm={(e) => {
+                        e?.stopPropagation();
+                        handleDeleteSession(session.sessionId);
+                      }}
+                      okText="删除"
+                      cancelText="取消"
+                      okButtonProps={{ danger: true }}
+                    >
+                      <DeleteOutlined
+                        className="session-delete-btn"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </Popconfirm>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    title={
+                      <span className="session-title">
+                        {session.lastMessage || '新会话'}
+                        {session.status === 0 && (
+                          <Badge status="processing" className="session-badge" />
+                        )}
+                      </span>
+                    }
+                    description={
+                      <span className="session-time">
+                        {dayjs(session.updatedAt).format('MM-DD HH:mm')}
+                      </span>
+                    }
+                  />
+                </List.Item>
+              )}
+            />
+          </Spin>
+        </div>
+
       </aside>
 
       {/* 主对话区 */}

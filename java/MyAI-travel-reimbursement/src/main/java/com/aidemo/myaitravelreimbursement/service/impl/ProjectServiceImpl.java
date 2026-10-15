@@ -160,6 +160,8 @@ public class ProjectServiceImpl implements ProjectService {
                                     .eq(com.aidemo.myaitravelreimbursement.entity.UploadFile::getProjectId, p.getId())
                     );
                     vo.setFileCount(fileCount);
+                    // 与项目详情口径一致：已确认文件的识别结果金额之和
+                    vo.setTotalAmount(calculateTotalAmount(p.getId()));
                     return vo;
                 })
                 .toList();

@@ -26,19 +26,21 @@
   flex-shrink: 0;
 }
 
-.sidebar-header .ant-btn-text {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 6px;
-  border-radius: 4px;
+/* 新建会话面板：独立小面板，位于会话列表上方，顶部分隔线与快捷指令面板隔开 */
+.sidebar-new-session {
+  padding: 12px 16px;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+  flex-shrink: 0;
 }
 
-.sidebar-header .ant-btn-text:hover {
-  background: #f5f5f5;
+.new-session-btn {
+  height: 44px;
+  font-size: 16px !important;
+  font-weight: 600;
 }
 
-/* 会话列表区域：占据中间可伸缩空间，独立滚动 */
+/* 会话列表区域：占据剩余空间，高度固定，内容超出时独立滚动 */
 .sidebar-sessions {
   flex: 1;
   min-height: 80px;
@@ -46,11 +48,10 @@
   padding: 8px 0;
 }
 
-/* 项目选择器：固定在底部上方 */
+/* 项目选择器：位于面板顶部 */
 .sidebar-project-selector {
   padding: 12px 16px;
   border-bottom: 1px solid #f0f0f0;
-  border-top: 1px solid #f0f0f0;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -66,13 +67,11 @@
   color: #333;
 }
 
-/* 侧边栏底部：项目信息 + 快捷指令 + 返回按钮，固定不滚动 */
-.sidebar-bottom {
+/* 项目信息与功能面板：位于侧边栏顶部，高度随内容自适应，无滚动条 */
+.sidebar-panel {
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  max-height: 45%;
-  overflow-y: auto;
 }
 
 /* 项目信息卡片 */
@@ -143,20 +142,6 @@
 .quick-action-btn:hover {
   background: #e6f4ff;
   color: #3b82f6;
-}
-
-/* 侧边栏底部 */
-.sidebar-footer {
-  padding: 8px;
-  border-top: 1px solid #f0f0f0;
-  flex-shrink: 0;
-}
-
-.back-btn {
-  width: 100%;
-  justify-content: flex-start;
-  color: #666;
-  font-size: 13px;
 }
 
 /* 会话列表项 */

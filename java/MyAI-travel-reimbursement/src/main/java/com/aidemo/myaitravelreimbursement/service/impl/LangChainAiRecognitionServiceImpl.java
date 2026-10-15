@@ -137,9 +137,22 @@ public class LangChainAiRecognitionServiceImpl implements AiRecognitionService {
 
             String Type = "invoice".equals(type) ? "发票" : "截图";
 
-            String aiResponse = callAiApi(imageDataUri, prompt,Type);
-
-            Object parsedResult = parseStructuredResult(aiResponse, type);
+            String aiResponse = null;
+            Object parsedResult = null;
+            // 模型偶发返回带 Markdown 围栏/杂质的文本导致解析失败，允许重试（共 2 次尝试）
+            int maxAttempts = 2;
+            for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+                try {
+                    aiResponse = callAiApi(imageDataUri, prompt, Type);
+                    parsedResult = parseStructuredResult(aiResponse, type);
+                    break;
+                } catch (RuntimeException e) {
+                    if (attempt == maxAttempts) {
+                        throw e;
+                    }
+                    log.warn("AI识别第 {} 次尝试失败，准备重试: fileId={}, error={}", attempt, fileId, e.getMessage());
+                }
+            }
             RecognitionResult rr = mapToEntity(parsedResult, file, type, aiResponse);
 
             // 置信度低于 0.5 视为识别失败
@@ -256,8 +269,10 @@ public class LangChainAiRecognitionServiceImpl implements AiRecognitionService {
      */
     private Object parseStructuredResult(String aiResponse, String type) {
         try {
+            // AI 偶发将结果包裹在 Markdown 代码围栏（```json ... ```）中，先剥离再解析
+            String cleaned = extractJson(aiResponse);
             // AI 可能将 null 日期写成字符串 "null"，预处理后替换为真正的 JSON null
-            String preprocessed = aiResponse.replaceAll(
+            String preprocessed = cleaned.replaceAll(
                     "\"(" + ("invoice".equals(type) ? "invoice_date" : "consumption_date") + ")\"\\s*:\\s*\"null\"",
                     "\"$1\": null"
             );
@@ -271,6 +286,31 @@ public class LangChainAiRecognitionServiceImpl implements AiRecognitionService {
             // 直接抛 RuntimeException 而非 BusinessException，避免被外层 catch 再次处理并触发事务回滚
             throw new RuntimeException("AI 返回格式解析失败: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * 从 AI 响应中提取纯 JSON 文本：
+     * 1. 去除 Markdown 代码围栏（```json ... ```）；
+     * 2. 兜底截取第一个 '{' 与最后一个 '}' 之间的内容。
+     */
+    private String extractJson(String aiResponse) {
+        if (aiResponse == null) {
+            return "";
+        }
+        String text = aiResponse.trim();
+        if (text.startsWith("```")) {
+            text = text.replaceFirst("^```[a-zA-Z]*\\s*", "")
+                    .replaceFirst("\\s*```$", "")
+                    .trim();
+        }
+        if (!text.startsWith("{")) {
+            int start = text.indexOf('{');
+            int end = text.lastIndexOf('}');
+            if (start >= 0 && end > start) {
+                text = text.substring(start, end + 1);
+            }
+        }
+        return text;
     }
 
     /**

@@ -5,7 +5,6 @@ import {
   UploadOutlined,
   FileTextOutlined,
   HomeOutlined,
-  SettingOutlined,
   RobotOutlined,
   LogoutOutlined,
   UserOutlined,
@@ -45,11 +44,6 @@ export const MainLayout: React.FC = () => {
       key: '/report',
       icon: <FileTextOutlined />,
       label: '报销报表',
-    },
-    {
-      key: '/settings',
-      icon: <SettingOutlined />,
-      label: '设置',
     },
     {
       key: '/agent',

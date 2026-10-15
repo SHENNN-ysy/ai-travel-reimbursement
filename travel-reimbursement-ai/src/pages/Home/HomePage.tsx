@@ -94,21 +94,21 @@ export const HomePage: React.FC = () => {
   const quickActions = [
     {
       title: '上传资料',
-      description: '上传发票、截图、附件，AI自动识别',
+      description: '上传发票、截图、附件',
       icon: '📤',
       path: '/archive',
     },
     {
-      title: '生成报表',
-      description: '根据识别结果生成报销汇总表',
+      title: '查看报表',
+      description: '查看并审核资料汇总结果',
       icon: '📊',
       path: '/report',
     },
     {
-      title: '历史记录',
-      description: '查看历史报销项目',
-      icon: '📁',
-      path: '/archive',
+      title: 'AI助手',
+      description: 'AI快捷完成报销',
+      icon: '🤖',
+      path: '/agent',
     },
   ];
 

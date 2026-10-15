@@ -876,6 +876,14 @@ interface UploadAreaProps {
 const UploadArea: React.FC<UploadAreaProps> = ({ type, files, onFileChange }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // 发票和付款截图允许上传的格式（与后端接口支持的格式保持一致）
+  // attachment 为 null 表示不限制格式
+  const ALLOWED_EXTENSIONS: Record<string, string[] | null> = {
+    invoice: ['pdf', 'jpg', 'jpeg', 'png', 'heic', 'gif', 'webp'],
+    screenshot: ['pdf', 'jpg', 'jpeg', 'png', 'heic', 'gif', 'webp'],
+    attachment: null,
+  };
+
   const getTitle = () => {
     switch (type) {
       case 'invoice': return '📄 发票文件';
@@ -885,26 +893,35 @@ const UploadArea: React.FC<UploadAreaProps> = ({ type, files, onFileChange }) =>
   };
 
   const getAccept = () => {
-    switch (type) {
-      case 'invoice': return '.pdf';
-      case 'screenshot': return 'image/*';
-      case 'attachment': return '*/*';
-    }
+    const allowed = ALLOWED_EXTENSIONS[type];
+    if (!allowed) return '*/*';
+    return allowed.map(ext => `.${ext}`).join(',');
   };
 
   const getHint = () => {
     switch (type) {
-      case 'invoice': return '支持 PDF 文件';
-      case 'screenshot': return '支持 JPG、PNG 等图片';
+      case 'invoice': return '支持 PDF、JPG、PNG 等格式';
+      case 'screenshot': return '支持 PDF、JPG、PNG 等格式';
       case 'attachment': return '支持所有文件格式';
     }
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = e.target.files;
-    if (!selectedFiles) return;
+  // 校验文件格式，过滤出不支持的文件并提示
+  const filterValidFiles = (fileList: File[]): File[] => {
+    const allowed = ALLOWED_EXTENSIONS[type];
+    if (!allowed) return fileList;
+    return fileList.filter(file => {
+      const ext = file.name.split('.').pop()?.toLowerCase() || '';
+      if (!allowed.includes(ext)) {
+        message.error(`不支持的文件格式: ${file.name}，仅支持 PDF、JPG、PNG 等格式`);
+        return false;
+      }
+      return true;
+    });
+  };
 
-    const newFiles: UploadFile[] = Array.from(selectedFiles).map((file) => ({
+  const buildUploadFiles = (fileList: File[]): UploadFile[] =>
+    fileList.map((file) => ({
       id: `${Date.now()}-${file.name}`,
       name: file.name,
       file: file,
@@ -916,7 +933,14 @@ const UploadArea: React.FC<UploadAreaProps> = ({ type, files, onFileChange }) =>
       confirmed: false,
     }));
 
-    onFileChange([...files, ...newFiles]);
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = e.target.files;
+    if (!selectedFiles) return;
+
+    const validFiles = filterValidFiles(Array.from(selectedFiles));
+    if (validFiles.length > 0) {
+      onFileChange([...files, ...buildUploadFiles(validFiles)]);
+    }
     e.target.value = '';
   };
 
@@ -925,19 +949,10 @@ const UploadArea: React.FC<UploadAreaProps> = ({ type, files, onFileChange }) =>
     const droppedFiles = e.dataTransfer.files;
     if (!droppedFiles) return;
 
-    const newFiles: UploadFile[] = Array.from(droppedFiles).map((file) => ({
-      id: `${Date.now()}-${file.name}`,
-      name: file.name,
-      file: file,
-      size: file.size,
-      type: type,
-      status: 'pending' as const,
-      createdAt: new Date().toISOString(),
-      recognitionStatus: 'pending' as const,
-      confirmed: false,
-    }));
-
-    onFileChange([...files, ...newFiles]);
+    const validFiles = filterValidFiles(Array.from(droppedFiles));
+    if (validFiles.length > 0) {
+      onFileChange([...files, ...buildUploadFiles(validFiles)]);
+    }
   };
 
   const handleDragOver = (e: React.DragEvent) => {
